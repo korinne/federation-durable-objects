@@ -1,0 +1,12 @@
+federation_version: =2.3.1
+subgraphs:
+  weather:
+    routing_url: http://localhost:8787/weather/graphql
+    schema:
+    
+      file: ./src/durable-objects/schemas/weather-records-schema.graphql
+  tide:
+    routing_url: http://localhost:8787/tide/graphql
+
+    schema:
+      file: ./src/durable-objects/schemas/tide-records-schema.graphql

@@ -1,0 +1,20 @@
+  extend schema
+    @link(
+      url: "https://specs.apollo.dev/federation/v2.3"
+      import: ["@shareable"]
+    )
+
+  extend type Query {
+    tide: TideData
+  }
+
+  type TideData {
+    height: Float!
+    status: String!
+    timestamp: String!
+    station_id: String!
+  }
+
+  type Mutation {
+    updateTideData(lat: Float!, lon: Float!): Boolean!
+  }

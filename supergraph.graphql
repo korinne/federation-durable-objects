@@ -1,0 +1,96 @@
+schema
+  @link(url: "https://specs.apollo.dev/link/v1.0")
+  @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION)
+{
+  query: Query
+  mutation: Mutation
+}
+
+directive @join__enumValue(graph: join__Graph!) repeatable on ENUM_VALUE
+
+directive @join__field(graph: join__Graph, requires: join__FieldSet, provides: join__FieldSet, type: String, external: Boolean, override: String, usedOverridden: Boolean) repeatable on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
+
+directive @join__graph(name: String!, url: String!) on ENUM_VALUE
+
+directive @join__implements(graph: join__Graph!, interface: String!) repeatable on OBJECT | INTERFACE
+
+directive @join__type(graph: join__Graph!, key: join__FieldSet, extension: Boolean! = false, resolvable: Boolean! = true, isInterfaceObject: Boolean! = false) repeatable on OBJECT | INTERFACE | UNION | ENUM | INPUT_OBJECT | SCALAR
+
+directive @join__unionMember(graph: join__Graph!, member: String!) repeatable on UNION
+
+directive @link(url: String, as: String, for: link__Purpose, import: [link__Import]) repeatable on SCHEMA
+
+scalar join__FieldSet
+
+enum join__Graph {
+  TIDE @join__graph(name: "tide", url: "http://localhost:8787/tide/graphql")
+  WEATHER @join__graph(name: "weather", url: "http://localhost:8787/weather/graphql")
+}
+
+scalar link__Import
+
+enum link__Purpose {
+  """
+  `SECURITY` features provide metadata necessary to securely resolve fields.
+  """
+  SECURITY
+
+  """
+  `EXECUTION` features provide metadata necessary for operation execution.
+  """
+  EXECUTION
+}
+
+type Location
+  @join__type(graph: WEATHER)
+{
+  lat: Float!
+  lon: Float!
+}
+
+type Mutation
+  @join__type(graph: TIDE)
+  @join__type(graph: WEATHER)
+{
+  updateTideData(lat: Float!, lon: Float!): Boolean! @join__field(graph: TIDE)
+  addLocation(lat: Float!, lon: Float!): Boolean! @join__field(graph: WEATHER)
+  updateWeatherData: Boolean! @join__field(graph: WEATHER)
+  createWeatherRecord(lat: Float!, lon: Float!, windSpeed: Float!, precipitation: Float!): Weather @join__field(graph: WEATHER)
+}
+
+type Query
+  @join__type(graph: TIDE)
+  @join__type(graph: WEATHER)
+{
+  tide: TideData @join__field(graph: TIDE)
+  weatherAtLocation(lat: Float!, lon: Float!): Weather @join__field(graph: WEATHER)
+  allWeatherData: [Weather!]! @join__field(graph: WEATHER)
+  weather(lat: Float!, lon: Float!): WeatherData @join__field(graph: WEATHER)
+}
+
+type TideData
+  @join__type(graph: TIDE)
+{
+  height: Float!
+  status: String!
+  timestamp: String!
+  station_id: String!
+}
+
+type Weather
+  @join__type(graph: WEATHER)
+{
+  id: ID!
+  windSpeed: Float!
+  precipitation: Float!
+  timestamp: String!
+  location: Location!
+}
+
+type WeatherData
+  @join__type(graph: WEATHER)
+{
+  wind_speed: Float!
+  precipitation: Float!
+  timestamp: String!
+}

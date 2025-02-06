@@ -1,0 +1,34 @@
+#:schema node_modules/wrangler/config-schema.json
+compatibility_date = "2024-11-12"
+main = "src/index.ts"
+name = "sailing-api"
+send_metrics = false
+
+# Needed only for apollo studio
+compatibility_flags = ["nodejs_compat"]
+
+# Workers Logs
+# Docs: https://developers.cloudflare.com/workers/observability/logs/workers-logs/
+# Configuration: https://developers.cloudflare.com/workers/observability/logs/workers-logs/#enable-workers-logs
+[observability]
+enabled = false
+
+[[rules]]
+type = "Text"
+globs = ["**/*.graphql"]
+fallthrough = true
+
+
+[[durable_objects.bindings]]
+class_name = "WeatherDurableObject"
+name = "WEATHER_DURABLE_OBJECT"
+
+[[durable_objects.bindings]]
+class_name = "TideDurableObject"
+name = "TIDE_DURABLE_OBJECT"
+
+# Durable Object migrations.
+# Docs: https://developers.cloudflare.com/workers/wrangler/configuration/#migrations
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["WeatherDurableObject", "TideDurableObject"]

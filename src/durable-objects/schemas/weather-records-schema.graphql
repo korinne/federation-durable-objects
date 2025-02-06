@@ -1,0 +1,41 @@
+ extend schema
+    @link(
+      url: "https://specs.apollo.dev/federation/v2.3"
+      import: ["@shareable"]
+    )
+
+  extend type Query {
+    weatherAtLocation(lat: Float!, lon: Float!): Weather
+    allWeatherData: [Weather!]!
+    weather(lat: Float!, lon: Float!): WeatherData
+  }
+
+  type Weather {
+    id: ID!
+    windSpeed: Float!
+    precipitation: Float!
+    timestamp: String!
+    location: Location!
+  }
+
+  type Location {
+    lat: Float!
+    lon: Float!
+  }
+
+  type WeatherData {
+    wind_speed: Float!
+    precipitation: Float!
+    timestamp: String!
+  }
+
+  type Mutation {
+    addLocation(lat: Float!, lon: Float!): Boolean!
+    updateWeatherData: Boolean!
+    createWeatherRecord(
+      lat: Float!
+      lon: Float!
+      windSpeed: Float!
+      precipitation: Float!
+    ): Weather
+  }
